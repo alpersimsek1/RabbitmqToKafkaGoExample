@@ -30,11 +30,11 @@ func main() {
 
 	kafkaconn, _ := kafka.DialLeader(context.Background(), "udp", "localhost:9092", "test", 5)
 	w := kafka.NewWriter(kafka.WriterConfig{
-		Brokers: []string{"localhost:9092"},
+		Brokers: []string{"kafka:9092"},
 		Topic:   "test",
 		Balancer: &kafka.LeastBytes{},
 	})
-	conn, err := amqp.Dial("amqp://guest:localhost:5672/")
+	conn, err := amqp.Dial("amqp://localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -43,7 +43,7 @@ func main() {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"q_name", // name
+		"processed_machine_action_notif", // name
 		true,                             // durable
 		false,                            // delete when unused
 		false,                            // exclusive
